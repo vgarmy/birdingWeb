@@ -38,7 +38,7 @@ function ContactForm() {
 
   return (
     <section id="contact"
-      className="relative w-full bg-cover bg-center flex items-center justify-center py-50" 
+      className="relative w-full bg-cover bg-center flex items-center justify-center py-20 md:py-50 px-2.5 md:px-0" 
        style={{ backgroundImage: `url(${birdtable})` }}
     >
       {/* Mörk overlay för bättre läsbarhet */}

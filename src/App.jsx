@@ -4,7 +4,7 @@ import apimage from '/Image4.png';
 import birdtable from '/Image.jpg';
 import './App.css';
 import birdsData from './birds.json';
-import { FaArrowDown, FaRulerVertical, FaWeightHanging, FaFeather, FaTimes, FaArrowUp } from 'react-icons/fa';
+import { FaArrowDown, FaRulerVertical, FaWeightHanging, FaFeather, FaTimes, FaArrowUp, FaBars } from 'react-icons/fa';
 import ContactForm from './ContactForm';
 
 function App() {
@@ -12,6 +12,8 @@ function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
 
   useEffect(() => {
     const randomBird = birdsData.birds[Math.floor(Math.random() * birdsData.birds.length)];
@@ -38,26 +40,39 @@ function App() {
     <div className="relative flex flex-col min-h-screen">
       <style>{`html { scroll-behavior: smooth; }`}</style>
       <header
-        className={`fixed top-0 left-0 w-full z-50 flex items-center px-20 py-4 transition-colors duration-300 ${isScrolled ? 'bg-white text-green-900 shadow-lg' : 'backdrop-blur-md bg-black/10 text-white'
+        className={`fixed top-0 left-0 w-full z-50 flex flex-col md:flex-row items-center px-4 md:px-20 py-4 transition-colors duration-300 ${isScrolled ? "bg-white text-green-900 shadow-lg" : "backdrop-blur-md bg-black/10 text-white"
           }`}
       >
-        <div className="flex items-center">
+        <div className="flex items-center justify-between w-full">
           <a href="/">
-            <img src={viteLogo} alt="Logo" className="h-16" />
+            <img src={viteLogo} alt="Logo" className="h-12 md:h-16" />
           </a>
+
+          {/* Hamburger Menu Button (Only on Mobile) */}
+          <button
+            className="md:hidden text-3xl text-current focus:outline-none"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <FaTimes /> : <FaBars />}
+          </button>
         </div>
-        <nav className="flex-1">
-          <ul className="flex justify-end space-x-10 uppercase font-bold tracking-wide">
-            <li><a href="#" className="hover:opacity-75">Hem</a></li>
-            <li><a href="#aboutapp" className="hover:opacity-75">FåglaAppen</a></li>
-            <li><a href="#privacy-policy" className="hover:opacity-75">Integritetspolicy</a></li>
-            <li><a href="#contact" className="hover:opacity-75">Kontakt</a></li>
+
+        {/* Navigation Menu (Hidden on Mobile by Default) */}
+        <nav
+          className={`absolute top-full left-0 w-full bg-white text-green-900 shadow-md md:shadow-none md:bg-transparent md:text-current md:relative md:flex md:items-center md:justify-end ${menuOpen ? "block" : "hidden"
+            } md:block transition-all duration-300`}
+        >
+          <ul className="flex flex-col md:flex-row items-center md:justify-end space-y-4 md:space-y-0 md:space-x-10 uppercase font-bold tracking-wide py-4 md:py-0">
+            <li><a href="#" className="hover:opacity-75" onClick={() => setMenuOpen(false)}>Hem</a></li>
+            <li><a href="#aboutapp" className="hover:opacity-75" onClick={() => setMenuOpen(false)}>FåglaAppen</a></li>
+            <li><a href="#privacy-policy" className="hover:opacity-75" onClick={() => setMenuOpen(false)}>Integritetspolicy</a></li>
+            <li><a href="#contact" className="hover:opacity-75" onClick={() => setMenuOpen(false)}>Kontakt</a></li>
           </ul>
         </nav>
       </header>
 
       <main
-        className="h-screen relative bg-cover bg-center bg-no-repeat"
+        className="h-screen relative bg-cover bg-center bg-no-repeat bg-fixed"
         style={
           bird?.bilder?.length
             ? { backgroundImage: `url(${new URL(`./assets/birds/${bird.bilder[0]}`, import.meta.url).href})` }
@@ -68,20 +83,23 @@ function App() {
 
         {bird && (
           <div
-            className="absolute bottom-20 right-50 text-white cursor-pointer space-y-2"
+            className="absolute bottom-40 md:bottom-20 left-1/2 transform -translate-x-1/2 text-white cursor-pointer space-y-2 
+             text-center md:text-right md:left-auto md:right-20 md:translate-x-0"
             onClick={() => setShowDetails(!showDetails)}
           >
-            <h1 className="text-3xl font-extrabold drop-shadow-xl">{bird.namn}</h1>
-            <h2 className="text-xl italic text-gray-200">{bird.latinskt_namn}</h2>
+            <h1 className="text-lg sm:text-xl md:text-3xl font-extrabold drop-shadow-xl">{bird.namn}</h1>
+            <h2 className="text-sm sm:text-lg md:text-xl italic text-gray-200">{bird.latinskt_namn}</h2>
           </div>
+
+
         )}
 
         <div
-          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 transform ease-out ${showDetails ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 transform ease-out ${showDetails ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
             }`}
         >
           <div className="bg-gradient-to-br from-white to-yellow-50 ring-2 ring-yellow-300 ring-offset-2 ring-offset-white 
-                    backdrop-blur-md rounded-3xl p-8 max-w-xl w-full mx-4 text-slate-800 shadow-xl hover:shadow-2xl transition-shadow duration-300 relative">
+                backdrop-blur-md rounded-3xl p-8 max-w-xl w-full mx-4 text-slate-800 shadow-xl hover:shadow-2xl transition-shadow duration-300 relative">
             <button
               className="text-yellow-700 text-xl font-bold mb-4 float-right hover:text-yellow-900 cursor-pointer"
               onClick={() => setShowDetails(false)}
@@ -90,15 +108,19 @@ function App() {
             </button>
             {bird && (
               <>
-                <h3 className="text-4xl font-extrabold text-center mb-4 tracking-wider text-yellow-700">{bird.namn}</h3>
-                <p className="text-center text-lg italic text-slate-600 mb-6">{bird.latinskt_namn}</p>
+                <h3 className="text-2xl md:text-4xl font-extrabold text-center mb-4 tracking-wider text-yellow-700">
+                  {bird.namn}
+                </h3>
+                <p className="text-center text-base md:text-lg italic text-slate-600 mb-6">
+                  {bird.latinskt_namn}
+                </p>
                 <div className="mb-4">
                   <h4 className="font-semibold text-yellow-700">Beskrivning</h4>
                   <p>{bird.beskrivning}</p>
-                  <br />
-                  <p>{bird.övrig_information}</p>
+                  <br className="hidden md:block" />
+                  <p className="hidden md:block">{bird.övrig_information}</p>
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 hidden md:block">
                   <h4 className="font-semibold text-yellow-700">Utbredning i Sverige</h4>
                   <p>{bird.utbredning_i_sverige}</p>
                 </div>
@@ -107,15 +129,15 @@ function App() {
                   <p>{bird.lätbeskrivning}</p>
                 </div>
                 <div className="flex justify-around mt-8">
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center hidden md:block">
                     <FaRulerVertical className="text-3xl mb-2 text-yellow-700" />
                     <p>{bird.längd}</p>
                   </div>
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center hidden md:block">
                     <FaFeather className="text-3xl mb-2 text-yellow-700" />
                     <p>{bird.vingbredd}</p>
                   </div>
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center hidden md:block">
                     <FaWeightHanging className="text-3xl mb-2 text-yellow-700" />
                     <p>{bird.vikt}</p>
                   </div>
@@ -126,7 +148,8 @@ function App() {
         </div>
 
         {/* Bouncing Scroll Down Button */}
-        <a href="#aboutapp"
+        <a
+          href="#aboutapp"
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2 delayed-bounce bg-white/80 p-3 rounded-full shadow-lg hover:bg-white transition duration-800"
         >
           <FaArrowDown className="text-green-700 text-2xl" />
@@ -134,12 +157,13 @@ function App() {
       </main>
 
 
+
       {/* Birding App Information Section */}
-      <section id="aboutapp" className="w-full bg-gray-100 py-50 px-10">
+      <section id="aboutapp" className="w-full bg-gray-100 py-20 md:py-50 px-10">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center">
           {/* Text Content */}
           <div className="md:w-1/2 text-center md:text-left space-y-6">
-            <h2 className="text-4xl font-bold text-green-900">Upptäck glädjen med fågelskådning</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-green-900">Upptäck glädjen med fågelskådning</h2>
             <p className="text-lg text-gray-700">
               Fågelskådning är mer än bara en hobby – det är en chans att komma närmare naturen, upptäcka fantastiska arter och njuta av lugnet utomhus. Med vår Birding-app kan du spara de fåglar du spanar in, markera dina favoriter och samla coola utmärkelser för dina upptäckter.
             </p>
@@ -160,7 +184,7 @@ function App() {
 
       {/* Fågelbordet - Heltäckande bild med text till höger */}
       <section
-        className="relative w-full bg-cover bg-center py-50"
+        className="relative w-full bg-cover bg-center py-20 md:py-50"
         style={{ backgroundImage: `url(${birdtable})` }}
       >
         {/* Mörk overlay på höger sida */}
@@ -169,7 +193,7 @@ function App() {
         {/* Textinnehåll på höger sida */}
         <div className="relative z-10 h-full flex items-center justify-end max-w-6xl mx-auto px-10">
           <div className="text-white space-y-4 w-full md:w-1/2">
-            <h2 className="text-4xl font-bold">Vad ska du ha på fågelbordet?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Vad ska du ha på fågelbordet?</h2>
             <p className="text-lg">
               Ett fågelbord kan locka många olika fåglar beroende på vad du lägger ut.
               Solrosfrön, jordnötter, hampfrön och talgbollar är perfekta för att attrahera arter som
@@ -185,7 +209,7 @@ function App() {
       </section>
 
       {/* Privacy Policy Section */}
-      <section id="privacy-policy" className="w-full bg-white py-50 px-10 border-t border-gray-300">
+      <section id="privacy-policy" className="w-full bg-white py-20 md:py-50 px-10 border-t border-gray-300">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-green-900 text-center mb-6">Integritetspolicy</h2>
           <p className="text-gray-600 text-sm text-center mb-8">Senast uppdaterad: [Datum]</p>
