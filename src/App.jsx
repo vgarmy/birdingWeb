@@ -41,11 +41,12 @@ function App() {
     <div className="relative flex flex-col min-h-screen">
       <style>{`html { scroll-behavior: smooth; }`}</style>
       <header
-        className={`fixed top-0 left-0 w-full z-50 flex flex-col md:flex-row items-center px-4 md:px-20 py-4 transition-colors duration-300 ${isScrolled ? "bg-white text-green-900 shadow-lg" : "backdrop-blur-md bg-black/10 text-white"
-          }`}
+        className={`fixed top-0 left-0 w-full z-50 flex flex-col md:flex-row items-center px-4 md:px-20 py-4 
+              transition-all duration-100
+              ${isScrolled ? "bg-white text-green-900 shadow-lg" : "backdrop-blur-md bg-black/10 text-white"}`}
       >
         <div className="flex items-center justify-between w-full">
-          <a href="/">          
+          <a href="/">
             <img src={isScrolled ? greenLogo : viteLogo} alt="Logo" className="h-12 md:h-16" />
           </a>
 
@@ -60,8 +61,11 @@ function App() {
 
         {/* Navigation Menu (Hidden on Mobile by Default) */}
         <nav
-          className={`absolute top-full left-0 w-full bg-white text-green-900 shadow-md md:shadow-none md:bg-transparent md:text-current md:relative md:flex md:items-center md:justify-end ${menuOpen ? "block" : "hidden"
-            } md:block transition-all duration-300`}
+          className={`absolute top-full left-0 w-full shadow-md md:shadow-none md:bg-transparent md:text-current md:relative md:flex md:items-center md:justify-end 
+                transition-all duration-100
+                ${menuOpen ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-5 scale-95 pointer-events-none"} 
+                md:opacity-100 md:translate-y-0 md:scale-100 md:pointer-events-auto
+                ${menuOpen ? (isScrolled ? "bg-white text-green-900" : "backdrop-blur-md bg-black/10 text-white") : "bg-transparent md:bg-transparent"}`}
         >
           <ul className="flex flex-col md:flex-row items-center md:justify-end space-y-4 md:space-y-0 md:space-x-10 uppercase font-bold tracking-wide py-4 md:py-0">
             <li><a href="#" className="hover:opacity-75" onClick={() => setMenuOpen(false)}>Hem</a></li>
@@ -71,6 +75,8 @@ function App() {
           </ul>
         </nav>
       </header>
+
+
 
       <main
         className="h-screen relative bg-cover bg-center bg-no-repeat bg-fixed"
