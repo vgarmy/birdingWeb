@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import viteLogo from '/birding-logo.png';
+import greenLogo from '/birding-logo-green.png';
 import apimage from '/Image4.png';
 import birdtable from '/Image.jpg';
 import './App.css';
@@ -44,8 +45,8 @@ function App() {
           }`}
       >
         <div className="flex items-center justify-between w-full">
-          <a href="/">
-            <img src={viteLogo} alt="Logo" className="h-12 md:h-16" />
+          <a href="/">          
+            <img src={isScrolled ? greenLogo : viteLogo} alt="Logo" className="h-12 md:h-16" />
           </a>
 
           {/* Hamburger Menu Button (Only on Mobile) */}
@@ -129,15 +130,15 @@ function App() {
                   <p>{bird.lätbeskrivning}</p>
                 </div>
                 <div className="flex justify-around mt-8">
-                  <div className="flex flex-col items-center hidden md:block">
+                  <div className="flex flex-col items-center text-center hidden md:flex">
                     <FaRulerVertical className="text-3xl mb-2 text-yellow-700" />
                     <p>{bird.längd}</p>
                   </div>
-                  <div className="flex flex-col items-center hidden md:block">
+                  <div className="flex flex-col items-center text-center hidden md:flex">
                     <FaFeather className="text-3xl mb-2 text-yellow-700" />
                     <p>{bird.vingbredd}</p>
                   </div>
-                  <div className="flex flex-col items-center hidden md:block">
+                  <div className="flex flex-col items-center text-center hidden md:flex">
                     <FaWeightHanging className="text-3xl mb-2 text-yellow-700" />
                     <p>{bird.vikt}</p>
                   </div>
