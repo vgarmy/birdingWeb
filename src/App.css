@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@keyframes delayed-bounce {
+    0%, 10% { transform: translateY(0); } /* Start and reset position */
+    10% { transform: translateY(-10px); } /* Quick bounce */
+    100% { transform: translateY(0); } /* Stay still for the rest of the time */
+  }
+  
+  .delayed-bounce {
+    animation: delayed-bounce 2s infinite; /* Runs every 2 seconds */
+  }
