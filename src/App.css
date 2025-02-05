@@ -9,3 +9,8 @@
   .delayed-bounce {
     animation: delayed-bounce 2s infinite; /* Runs every 2 seconds */
   }
+
+  .fade-out {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+  }
