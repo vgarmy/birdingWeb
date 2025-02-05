@@ -192,7 +192,7 @@ function App() {
           }}
         ></div> 
         {/* Bakgrundsoverlay */}
-        <div className='absolute inset-0 bg-black/60'></div>
+        <div className='absolute inset-0 bg-black/30 z-20'></div>
         {/* Fågeltext, vi lägger till z-index 30 så att den ligger över overlay */}
         {currentBird && (
           <div
