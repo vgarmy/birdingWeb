@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import viteLogo from '/birding-logo.png';
 import greenLogo from '/birding-logo-green.png';
-import apimage from '/Image4.png';
+import apimage from '/iphone-briding.png';
 import birdtable from '/Image.jpg';
+import google from '/googleplay.png';
+import apple from '/appstore.png';
 import './App.css';
 import birdsData from './birds.json';
 import { FaArrowDown, FaRulerVertical, FaWeightHanging, FaFeather, FaTimes, FaArrowUp, FaBars } from 'react-icons/fa';
@@ -46,7 +48,7 @@ function App() {
               ${isScrolled ? "bg-white text-green-900 shadow-lg" : "backdrop-blur-md bg-black/10 text-white"}`}
       >
         <div className="flex items-center justify-between w-full">
-          <a href="/">
+          <a href="#">
             <img src={isScrolled ? greenLogo : viteLogo} alt="Logo" className="h-12 md:h-16" />
           </a>
 
@@ -183,9 +185,18 @@ function App() {
           </div>
 
           {/* Image */}
-          <div className="md:w-1/2 flex justify-center mt-10 md:mt-0">
-            <img src={apimage} alt="Birding App" className="max-w-xs md:max-w-sm" />
-          </div>
+          <div className="md:w-1/2 flex flex-col items-center mt-10 md:mt-0">
+  <img src={apimage} alt="Birding App" className="w-full" />
+
+  <div className="flex gap-4 mt-4">
+    <a href="https://play.google.com/store/apps/details?id=your.app.id" target="_blank" rel="noopener noreferrer">
+      <img src={google} alt="Get it on Google Play" className="w-40" />
+    </a>
+    <a href="https://apps.apple.com/app/idyourappid" target="_blank" rel="noopener noreferrer">
+      <img src={apple} alt="Download on the App Store" className="w-40" />
+    </a>
+  </div>
+</div>
         </div>
       </section>
 
