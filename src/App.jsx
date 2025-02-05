@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import viteLogo from '/birding-logo.png';
 import greenLogo from '/birding-logo-green.png';
 import apimage from '/iphone-briding.png';
@@ -29,36 +29,45 @@ function App() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const currentBird = birdsData.birds[currentIndex];
+  // Använd en ref för att hålla reda på currentIndex stabilt
+  const currentIndexRef = useRef(currentIndex);
+  useEffect(function () {
+    currentIndexRef.current = currentIndex;
+  }, [currentIndex]);
 
   useEffect(function () {
-    var interval = setInterval(function () {
-      // Spara den nuvarande bilden som föregående
-      setPrevIndex(currentIndex);
-      // Återställ fadeClass så att den föregående bilden visas fullt
-      setFadeClass('');
-      // Uppdatera currentIndex till nästa bild
-      setCurrentIndex(function (prev) {
-        return (prev + 1) % birdsData.birds.length;
-      });
-      // Efter 50 ms, trigga fade-out på den föregående bilden
-      setTimeout(function () {
-        setFadeClass('fade-out');
-      }, 50);
-      // Efter transitionens varaktighet (1 s + 50 ms) tar vi bort föregående bild
-      setTimeout(function () {
-        setPrevIndex(null);
-        setFadeClass('');
-      }, 1050);
+    const interval = setInterval(function () {
+      const nextIndex = (currentIndexRef.current + 1) % birdsData.birds.length;
+      // Förladda nästa bild
+      const nextImageUrl = new URL(
+        `./assets/birds/${birdsData.birds[nextIndex].bilder[0]}`,
+        import.meta.url
+      ).href;
+      const img = new Image();
+      img.src = nextImageUrl;
+      img.onload = function () {
+        // När nästa bild är laddad, börja övergången
+        setPrevIndex(currentIndexRef.current);
+        setCurrentIndex(nextIndex);
+        // Ge React lite tid (100 ms) att rendera den gamla bilden med full opacitet
+        setTimeout(function () {
+          setFadeClass('fade-out');
+        }, 100);
+        // Vänta tills fade‑out-animationen är klar (t.ex. 2100 ms om vi har en 2s transition)
+        setTimeout(function () {
+          setPrevIndex(null);
+          setFadeClass('');
+        }, 2100);
+      };
     }, 5000); // Byt bild var 5:e sekund
 
     return function () {
       clearInterval(interval);
     };
-  }, [currentIndex]);
+  }, []); // Tom beroendelista – startar intervallet EN gång
 
   useEffect(function () {
-    var handleScroll = function () {
+    const handleScroll = function () {
       setIsScrolled(window.scrollY > 100);
       setShowBackToTop(window.scrollY > 300);
     };
@@ -68,7 +77,7 @@ function App() {
     };
   }, []);
 
-  var scrollToTop = function () {
+  const scrollToTop = function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -109,8 +118,8 @@ function App() {
             ' md:opacity-100 md:translate-y-0 md:scale-100 md:pointer-events-auto ' +
             (menuOpen
               ? (isScrolled
-                  ? 'bg-white text-green-900'
-                  : 'backdrop-blur-md bg-black/10 text-white')
+                ? 'bg-white text-green-900'
+                : 'backdrop-blur-md bg-black/10 text-white')
               : 'bg-transparent md:bg-transparent')
           }
         >
@@ -163,38 +172,26 @@ function App() {
         </nav>
       </header>
       <main className='h-screen relative'>
-        {/* Rendera föregående bild med crossfade (högre z-index) om den finns */}
+        {/* Om prevIndex inte är null renderas den gamla bilden med övergång (z-index 20) */}
         {prevIndex !== null && (
           <div
-            className={'absolute inset-0 z-20 bg-cover bg-center bg-no-repeat ' + fadeClass}
+            className={`absolute inset-0 z-20 bg-cover bg-center bg-no-repeat ${fadeClass}`}
             style={{
-              backgroundImage:
-                'url(' +
-                new URL(
-                  './assets/birds/' + birdsData.birds[prevIndex].bilder[0],
-                  import.meta.url
-                ).href +
-                ')'
+              backgroundImage: `url(${new URL(`./assets/birds/${birdsData.birds[prevIndex].bilder[0]}`, import.meta.url).href})`
             }}
           ></div>
         )}
-        {/* Rendera aktuell bild */}
+        {/* Aktuell bild med bg-fixed (z-index 10) */}
         <div
-          className='absolute inset-0 z-10 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 opacity-100 bg-fixed'
+          className="absolute inset-0 z-10 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 opacity-100 bg-fixed"
           style={{
-            backgroundImage:
-              'url(' +
-              new URL(
-                './assets/birds/' + birdsData.birds[currentIndex].bilder[0],
-                import.meta.url
-              ).href +
-              ')'
+            backgroundImage: `url(${new URL(`./assets/birds/${birdsData.birds[currentIndex].bilder[0]}`, import.meta.url).href})`
           }}
-        ></div> 
-        {/* Bakgrundsoverlay */}
-        <div className='absolute inset-0 bg-black/30 z-20'></div>
-        {/* Fågeltext, vi lägger till z-index 30 så att den ligger över overlay */}
-        {currentBird && (
+        ></div>
+        {/* Överlägg (overlay) */}
+        <div className='absolute inset-0 bg-black/40 z-20'></div>
+        {/* Text och interaktivt innehåll med högre z-index */}
+        {birdsData.birds[currentIndex] && (
           <div
             className='absolute bottom-40 md:bottom-20 left-1/2 z-30 transform -translate-x-1/2 text-white cursor-pointer space-y-2 text-center md:text-right md:left-auto md:right-20 md:translate-x-0'
             onClick={function () {
@@ -202,14 +199,13 @@ function App() {
             }}
           >
             <h1 className='text-lg sm:text-xl md:text-3xl font-extrabold drop-shadow-xl'>
-              {currentBird.namn}
+              {birdsData.birds[currentIndex].namn}
             </h1>
             <h2 className='text-sm sm:text-lg md:text-xl italic text-gray-200'>
-              {currentBird.latinskt_namn}
+              {birdsData.birds[currentIndex].latinskt_namn}
             </h2>
           </div>
         )}
-        {/* Detalj-popup om den visas, med extra z-index */}
         <div
           className={
             'absolute inset-0 z-40 flex items-center justify-center transition-all duration-300 transform ease-out ' +
@@ -225,53 +221,52 @@ function App() {
             >
               <FaTimes className='text-2xl mb-2 text-yellow-700' />
             </button>
-            {currentBird && (
+            {birdsData.birds[currentIndex] && (
               <div>
                 <h3 className='text-2xl md:text-4xl font-extrabold text-center mb-4 tracking-wider text-yellow-700'>
-                  {currentBird.namn}
+                  {birdsData.birds[currentIndex].namn}
                 </h3>
                 <p className='text-center text-base md:text-lg italic text-slate-600 mb-6'>
-                  {currentBird.latinskt_namn}
+                  {birdsData.birds[currentIndex].latinskt_namn}
                 </p>
                 <div className='mb-4'>
                   <h4 className='font-semibold text-yellow-700'>Beskrivning</h4>
-                  <p>{currentBird.beskrivning}</p>
+                  <p>{birdsData.birds[currentIndex].beskrivning}</p>
                   <br className='hidden md:block' />
                   <p className='hidden md:block'>
-                    {currentBird.övrig_information}
+                    {birdsData.birds[currentIndex].övrig_information}
                   </p>
                 </div>
                 <div className='mb-4 hidden md:block'>
                   <h4 className='font-semibold text-yellow-700'>
                     Utbredning i Sverige
                   </h4>
-                  <p>{currentBird.utbredning_i_sverige}</p>
+                  <p>{birdsData.birds[currentIndex].utbredning_i_sverige}</p>
                 </div>
                 <div className='mb-4'>
                   <h4 className='font-semibold text-yellow-700'>
                     Lätbeskrivning
                   </h4>
-                  <p>{currentBird.lätbeskrivning}</p>
+                  <p>{birdsData.birds[currentIndex].lätbeskrivning}</p>
                 </div>
                 <div className='flex justify-around mt-8'>
                   <div className='flex flex-col items-center text-center hidden md:flex'>
                     <FaRulerVertical className='text-3xl mb-2 text-yellow-700' />
-                    <p>{currentBird.längd}</p>
+                    <p>{birdsData.birds[currentIndex].längd}</p>
                   </div>
                   <div className='flex flex-col items-center text-center hidden md:flex'>
                     <FaFeather className='text-3xl mb-2 text-yellow-700' />
-                    <p>{currentBird.vingbredd}</p>
+                    <p>{birdsData.birds[currentIndex].vingbredd}</p>
                   </div>
                   <div className='flex flex-col items-center text-center hidden md:flex'>
                     <FaWeightHanging className='text-3xl mb-2 text-yellow-700' />
-                    <p>{currentBird.vikt}</p>
+                    <p>{birdsData.birds[currentIndex].vikt}</p>
                   </div>
                 </div>
               </div>
             )}
           </div>
         </div>
-        {/* Pilknapp med extra z-index så den syns */}
         <a
           href='#aboutapp'
           className='absolute bottom-10 left-1/2 z-30 transform -translate-x-1/2 delayed-bounce bg-white/80 p-3 rounded-full shadow-lg hover:bg-white transition duration-800'
@@ -419,10 +414,7 @@ function App() {
         </div>
       </section>
       <ContactForm />
-      <footer
-        id='footer'
-        className='h-20 w-full bg-white text-grey flex items-center justify-center'
-      >
+      <footer id='footer' className='h-20 w-full bg-white text-grey flex items-center justify-center'>
         <p>© 2025 Birding App. All rights reserved.</p>
       </footer>
       {showBackToTop && (
