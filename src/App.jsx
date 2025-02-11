@@ -171,109 +171,108 @@ function App() {
           </ul>
         </nav>
       </header>
-      <main className='h-screen relative'>
-        {/* Om prevIndex inte är null renderas den gamla bilden med övergång (z-index 20) */}
-        {prevIndex !== null && (
-          <div
-            className={`absolute inset-0 z-20 bg-cover bg-center bg-no-repeat ${fadeClass}`}
-            style={{
-              backgroundImage: `url(${new URL(`./assets/birds/${birdsData.birds[prevIndex].bilder[0]}`, import.meta.url).href})`
-            }}
-          ></div>
-        )}
-        {/* Aktuell bild med bg-fixed (z-index 10) */}
-        <div
-          className="absolute inset-0 z-10 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 opacity-100 bg-fixed"
-          style={{
-            backgroundImage: `url(${new URL(`./assets/birds/${birdsData.birds[currentIndex].bilder[0]}`, import.meta.url).href})`
-          }}
-        ></div>
-        {/* Överlägg (overlay) */}
-        <div className='absolute inset-0 bg-black/40 z-20'></div>
-        {/* Text och interaktivt innehåll med högre z-index */}
-        {birdsData.birds[currentIndex] && (
-          <div
-            className='absolute bottom-40 md:bottom-20 left-1/2 z-30 transform -translate-x-1/2 text-white cursor-pointer space-y-2 text-center md:text-right md:left-auto md:right-20 md:translate-x-0'
-            onClick={function () {
-              setShowDetails(!showDetails);
-            }}
-          >
-            <h1 className='text-lg sm:text-xl md:text-3xl font-extrabold drop-shadow-xl'>
-              {birdsData.birds[currentIndex].namn}
-            </h1>
-            <h2 className='text-sm sm:text-lg md:text-xl italic text-gray-200'>
-              {birdsData.birds[currentIndex].latinskt_namn}
-            </h2>
+      <main className="h-screen relative">
+  {prevIndex !== null && (
+    <div
+      className={`absolute inset-0 z-20 bg-cover bg-center bg-no-repeat ${fadeClass}`}
+      style={{
+        backgroundImage: `url(${new URL(
+          `./assets/birds/${birdsData.birds[prevIndex].bilder[0]}`,
+          import.meta.url
+        ).href})`
+      }}
+    ></div>
+  )}
+  <div
+    className="absolute inset-0 z-10 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 opacity-100 md:bg-fixed bg-scroll"
+    style={{
+      backgroundImage: `url(${new URL(
+        `./assets/birds/${birdsData.birds[currentIndex].bilder[0]}`,
+        import.meta.url
+      ).href})`
+    }}
+  ></div>
+  <div className="absolute inset-0 bg-black/40 z-20"></div>
+  {birdsData.birds[currentIndex] && (
+    <div
+      className="absolute bottom-40 md:bottom-20 left-1/2 z-30 transform -translate-x-1/2 text-white cursor-pointer space-y-2 text-center md:text-right md:left-auto md:right-20 md:translate-x-0"
+      onClick={() => setShowDetails(!showDetails)}
+    >
+      <h1 className="text-lg sm:text-xl md:text-3xl font-extrabold drop-shadow-xl">
+        {birdsData.birds[currentIndex].namn}
+      </h1>
+      <h2 className="text-sm sm:text-lg md:text-xl italic text-gray-200">
+        {birdsData.birds[currentIndex].latinskt_namn}
+      </h2>
+    </div>
+  )}
+  <div
+    className={
+      "absolute inset-0 z-40 flex items-center justify-center transition-all duration-300 transform ease-out " +
+      (showDetails ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")
+    }
+  >
+    <div className="bg-gradient-to-br from-white to-yellow-50 ring-2 ring-yellow-300 ring-offset-2 ring-offset-white backdrop-blur-md rounded-3xl p-8 max-w-xl w-full mx-4 text-slate-800 shadow-xl hover:shadow-2xl transition-shadow duration-300 relative">
+      <button
+        className="text-yellow-700 text-xl font-bold mb-4 float-right hover:text-yellow-900 cursor-pointer"
+        onClick={() => setShowDetails(false)}
+      >
+        <FaTimes className="text-2xl mb-2 text-yellow-700" />
+      </button>
+      {birdsData.birds[currentIndex] && (
+        <div>
+          <h3 className="text-2xl md:text-4xl font-extrabold text-center mb-4 tracking-wider text-yellow-700">
+            {birdsData.birds[currentIndex].namn}
+          </h3>
+          <p className="text-center text-base md:text-lg italic text-slate-600 mb-6">
+            {birdsData.birds[currentIndex].latinskt_namn}
+          </p>
+          <div className="mb-4">
+            <h4 className="font-semibold text-yellow-700">Beskrivning</h4>
+            <p>{birdsData.birds[currentIndex].beskrivning}</p>
+            <br className="hidden md:block" />
+            <p className="hidden md:block">
+              {birdsData.birds[currentIndex].övrig_information}
+            </p>
           </div>
-        )}
-        <div
-          className={
-            'absolute inset-0 z-40 flex items-center justify-center transition-all duration-300 transform ease-out ' +
-            (showDetails ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none')
-          }
-        >
-          <div className='bg-gradient-to-br from-white to-yellow-50 ring-2 ring-yellow-300 ring-offset-2 ring-offset-white backdrop-blur-md rounded-3xl p-8 max-w-xl w-full mx-4 text-slate-800 shadow-xl hover:shadow-2xl transition-shadow duration-300 relative'>
-            <button
-              className='text-yellow-700 text-xl font-bold mb-4 float-right hover:text-yellow-900 cursor-pointer'
-              onClick={function () {
-                setShowDetails(false);
-              }}
-            >
-              <FaTimes className='text-2xl mb-2 text-yellow-700' />
-            </button>
-            {birdsData.birds[currentIndex] && (
-              <div>
-                <h3 className='text-2xl md:text-4xl font-extrabold text-center mb-4 tracking-wider text-yellow-700'>
-                  {birdsData.birds[currentIndex].namn}
-                </h3>
-                <p className='text-center text-base md:text-lg italic text-slate-600 mb-6'>
-                  {birdsData.birds[currentIndex].latinskt_namn}
-                </p>
-                <div className='mb-4'>
-                  <h4 className='font-semibold text-yellow-700'>Beskrivning</h4>
-                  <p>{birdsData.birds[currentIndex].beskrivning}</p>
-                  <br className='hidden md:block' />
-                  <p className='hidden md:block'>
-                    {birdsData.birds[currentIndex].övrig_information}
-                  </p>
-                </div>
-                <div className='mb-4 hidden md:block'>
-                  <h4 className='font-semibold text-yellow-700'>
-                    Utbredning i Sverige
-                  </h4>
-                  <p>{birdsData.birds[currentIndex].utbredning_i_sverige}</p>
-                </div>
-                <div className='mb-4'>
-                  <h4 className='font-semibold text-yellow-700'>
-                    Lätbeskrivning
-                  </h4>
-                  <p>{birdsData.birds[currentIndex].lätbeskrivning}</p>
-                </div>
-                <div className='flex justify-around mt-8'>
-                  <div className='flex flex-col items-center text-center hidden md:flex'>
-                    <FaRulerVertical className='text-3xl mb-2 text-yellow-700' />
-                    <p>{birdsData.birds[currentIndex].längd}</p>
-                  </div>
-                  <div className='flex flex-col items-center text-center hidden md:flex'>
-                    <FaFeather className='text-3xl mb-2 text-yellow-700' />
-                    <p>{birdsData.birds[currentIndex].vingbredd}</p>
-                  </div>
-                  <div className='flex flex-col items-center text-center hidden md:flex'>
-                    <FaWeightHanging className='text-3xl mb-2 text-yellow-700' />
-                    <p>{birdsData.birds[currentIndex].vikt}</p>
-                  </div>
-                </div>
-              </div>
-            )}
+          <div className="mb-4 hidden md:block">
+            <h4 className="font-semibold text-yellow-700">
+              Utbredning i Sverige
+            </h4>
+            <p>{birdsData.birds[currentIndex].utbredning_i_sverige}</p>
+          </div>
+          <div className="mb-4">
+            <h4 className="font-semibold text-yellow-700">
+              Lätbeskrivning
+            </h4>
+            <p>{birdsData.birds[currentIndex].lätbeskrivning}</p>
+          </div>
+          <div className="flex justify-around mt-8">
+            <div className="flex flex-col items-center text-center hidden md:flex">
+              <FaRulerVertical className="text-3xl mb-2 text-yellow-700" />
+              <p>{birdsData.birds[currentIndex].längd}</p>
+            </div>
+            <div className="flex flex-col items-center text-center hidden md:flex">
+              <FaFeather className="text-3xl mb-2 text-yellow-700" />
+              <p>{birdsData.birds[currentIndex].vingbredd}</p>
+            </div>
+            <div className="flex flex-col items-center text-center hidden md:flex">
+              <FaWeightHanging className="text-3xl mb-2 text-yellow-700" />
+              <p>{birdsData.birds[currentIndex].vikt}</p>
+            </div>
           </div>
         </div>
-        <a
-          href='#aboutapp'
-          className='absolute bottom-10 left-1/2 z-30 transform -translate-x-1/2 delayed-bounce bg-white/80 p-3 rounded-full shadow-lg hover:bg-white transition duration-800'
-        >
-          <FaArrowDown className='text-green-700 text-2xl' />
-        </a>
-      </main>
+      )}
+    </div>
+  </div>
+  <a
+    href="#aboutapp"
+    className="absolute bottom-10 left-1/2 z-30 transform -translate-x-1/2 delayed-bounce bg-white/80 p-3 rounded-full shadow-lg hover:bg-white transition duration-800"
+  >
+    <FaArrowDown className="text-green-700 text-2xl" />
+  </a>
+</main>
+
       <section id='aboutapp' className='w-full bg-gray-100 py-20 md:py-50 px-10'>
         <div className='max-w-7xl mx-auto flex flex-col md:flex-row items-center'>
           <div className='md:w-1/2 text-center md:text-left space-y-6'>
